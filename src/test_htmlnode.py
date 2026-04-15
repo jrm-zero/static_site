@@ -19,6 +19,16 @@ class TestHTMLNode(unittest.TestCase):
         node2 = HTMLNode("p", "I lied, there is nothing in here", None , {"size": "32"})
         with self.assertRaises(NotImplementedError):
             node2.to_html()
-
+    def test_leaf_to_html_p(self):
+        node = LeafNode("p", "Hello, world!")
+        self.assertEqual(node.to_html(), "<p>Hello, world!</p>")
+    def test_leaf_print(self):
+        node = LeafNode("h1", "Hello, World!?")
+        node2 = LeafNode("h2", "no, says I", {"bold": "yes","italics": "no"})
+        self.assertIn("Hello", node.__repr__())
+        self.assertIn(": ", node2.__repr__())
+    def test_parent_access(self):
+        node = LeafNode("h2", "no, says I", {"bold": "yes","italics": "no"})
+        self.assertIn("bold=",node.props_to_html())
 if __name__ == "__main__":
     unittest.main()
