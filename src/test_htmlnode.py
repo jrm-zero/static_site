@@ -30,5 +30,51 @@ class TestHTMLNode(unittest.TestCase):
     def test_parent_access(self):
         node = LeafNode("h2", "no, says I", {"bold": "yes","italics": "no"})
         self.assertIn("bold=",node.props_to_html())
+
+
+    def test_to_html_with_children(self):
+        child_node = LeafNode("span", "child")
+        parent_node = ParentNode("div", [child_node])
+        self.assertEqual(parent_node.to_html(), "<div><span>child</span></div>")
+    def test_to_html_with_grandchildren(self):
+        grandchild_node = LeafNode("b", "grandchild")
+        child_node = ParentNode("span", [grandchild_node])
+        parent_node = ParentNode("div", [child_node])
+        self.assertEqual(
+            parent_node.to_html(),
+            "<div><span><b>grandchild</b></span></div>",
+        )
+    def test_missing_child(self):
+        child_node = None
+        parent_node = ParentNode("p", child_node)
+        with self.assertRaises(ValueError) as cm:
+            parent_node.to_html()
+        the_exception = cm.exception
+        self.assertIn("has no child", str(the_exception))
+    def test_missing_tag(self):
+        child_node = LeafNode("b", "grandchild")
+        parent_node = ParentNode(None, child_node)
+        with self.assertRaises(ValueError) as cm:
+            parent_node.to_html()
+        the_exception = cm.exception
+        self.assertIn("parent node has no tag", str(the_exception))
+    def test_nested_parents(self):
+        child_node = ParentNode("p", None)
+        parent_node = ParentNode("p", [child_node])
+        with self.assertRaises(ValueError) as cm:
+            parent_node.to_html()
+        the_exception = cm.exception
+        self.assertIn("has no child", str(the_exception))
+    def test_multi_children(self):
+        child_node = LeafNode("span", "child")
+        child_node_2 = LeafNode("b", "child_2")
+        child_node_3 = ParentNode("p", [child_node])
+        child_node_4 = LeafNode("italics", "child_3")
+        parent_node = ParentNode("div", [child_node_2, child_node_3, child_node_4])
+        self.assertEqual(
+            parent_node.to_html(), 
+            "<div><b>child_2</b><p><span>child</span></p><italics>child_3</italics></div>"
+            )
+
 if __name__ == "__main__":
     unittest.main()
