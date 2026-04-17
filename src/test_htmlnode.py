@@ -1,5 +1,7 @@
 import unittest
 from htmlnode import *
+from textnode import *
+from functions import *
 
 class TestHTMLNode(unittest.TestCase):
     def test_print_node(self):
