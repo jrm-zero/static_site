@@ -22,6 +22,8 @@ def text_node_to_html_node(text_node):
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
     new_nodes = []
     for node in old_nodes:
+        if node.text == "":
+            continue
         if node.text_type is not TextType.TEXT:
             new_nodes.append(node)
             continue
@@ -60,3 +62,64 @@ def extract_markdown_links(text):
         src = re.findall(r"\(([^\)\(]*)\)", match)
         links.append((alt_text[0], src[0]))
     return links
+
+def split_nodes_image(old_nodes):
+    new_nodes = []
+    for node in old_nodes:
+        if node.text_type is not TextType.TEXT:
+            new_nodes.append(node)
+            continue
+        images = extract_markdown_images(node.text)
+        running_text = node.text
+        if len(images) == 0:
+            new_nodes.append(node)
+        for i in range(len(images)):
+            sections = running_text.split(f"![{images[i][0]}]({images[i][1]})", 1)
+            new_nodes.append(TextNode(sections[0], TextType.TEXT))
+            new_nodes.append(TextNode(images[i][0],TextType.IMAGE, images[i][1]))
+            if i == (len(images) - 1) and sections[1] != "":
+                if sections[1] != "":
+                    new_nodes.append(TextNode(sections[1], TextType.TEXT))
+            running_text = sections[1]
+    return new_nodes
+
+def split_nodes_link(old_nodes):
+    new_nodes = []
+    for node in old_nodes:
+        if node.text_type is not TextType.TEXT:
+            new_nodes.append(node)
+            continue
+        links = extract_markdown_links(node.text)
+        running_text = node.text
+        if len(links) == 0:
+            new_nodes.append(node)
+        for i in range(len(links)):
+            sections = running_text.split(f"[{links[i][0]}]({links[i][1]})", 1)
+            new_nodes.append(TextNode(sections[0], TextType.TEXT))
+            new_nodes.append(TextNode(links[i][0],TextType.LINK, links[i][1]))
+            if i == (len(links) - 1) and sections[1] != "":
+                if sections[1] != "":
+                    new_nodes.append(TextNode(sections[1], TextType.TEXT))
+            running_text = sections[1]
+    return new_nodes
+
+def text_to_textnodes(text):
+    if len(text.strip()) == 0:
+        return []
+    node = TextNode(text, TextType.TEXT)
+    new_nodes = split_nodes_delimiter(
+        split_nodes_delimiter(
+            split_nodes_delimiter(
+                split_nodes_image(
+                    split_nodes_link(
+                        [node]
+                    )
+                ),
+                "**", TextType.BOLD
+            ),
+            "_", TextType.ITALIC
+        ), "`", TextType.CODE
+    )
+    #for i in range(len(new_nodes)):
+        #print(f"\n{i + 1}. {new_nodes[i]}")
+    return new_nodes

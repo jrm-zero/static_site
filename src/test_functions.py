@@ -46,7 +46,7 @@ class TestFunctions(unittest.TestCase):
     def test_code(self):
         node = TextNode("Hello World, it is I a weird Golgeram! see my code: `crazy indeed`", TextType.TEXT)
         new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
-        self.assertTrue(len(new_nodes) == 3)
+        self.assertTrue(len(new_nodes) == 2)
         for i in range(len(new_nodes)):
             self.assertNotIn("`", new_nodes[i].text)
     def test_error(self):
@@ -104,6 +104,126 @@ class TestFunctions(unittest.TestCase):
         images = extract_markdown_images(node.text)
         self.assertTrue(len(links) == 1)
         self.assertTrue(len(images) == 1)
-        
-        
+    def test_split_images(self):
+        node = TextNode(
+            "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png)",
+            TextType.TEXT,
+        )
+        new_nodes = split_nodes_image([node])
+        self.assertListEqual(
+            [
+                TextNode("This is text with an ", TextType.TEXT),
+                TextNode("image", TextType.IMAGE, "https://i.imgur.com/zjjcJKZ.png"),
+                TextNode(" and another ", TextType.TEXT),
+                TextNode(
+                    "second image", TextType.IMAGE, "https://i.imgur.com/3elNhQu.png"
+                ),
+            ],
+            new_nodes,
+        )
+    def test_split_links(self):
+        node = TextNode(
+            "This is a hyperlink [please click here](https://i.imgur.com/zjjcJKZ.png) and another [nope, click here!](https://i.imgur.com/3elNhQu.png)",
+            TextType.TEXT,
+        )
+        new_nodes = split_nodes_link([node])
+        self.assertListEqual(
+            [
+                TextNode("This is a hyperlink ", TextType.TEXT),
+                TextNode("please click here", TextType.LINK, "https://i.imgur.com/zjjcJKZ.png"),
+                TextNode(" and another ", TextType.TEXT),
+                TextNode(
+                    "nope, click here!", TextType.LINK, "https://i.imgur.com/3elNhQu.png"
+                ),
+            ],
+            new_nodes,
+        )
+    def test_split_both(self):
+        node = TextNode(
+            "This is a hyperlink [please click here](https://i.imgur.com/zjjcJKZ.png) and this is an image ![image](https://i.imgur.com/3elNhQu.png)",
+            TextType.TEXT,
+        )
+        new_nodes = split_nodes_link(split_nodes_image([node]))
+        self.assertListEqual(
+            [
+                TextNode("This is a hyperlink ", TextType.TEXT),
+                TextNode("please click here", TextType.LINK, "https://i.imgur.com/zjjcJKZ.png"),
+                TextNode(" and this is an image ", TextType.TEXT),
+                TextNode(
+                    "image", TextType.IMAGE, "https://i.imgur.com/3elNhQu.png"
+                ),
+            ],
+            new_nodes,
+        )
+    def test_split_mixed(self):
+        node = TextNode(
+            "**This** is a hyperlink [clickety, click](www.google.com) and _this_ is an image ![clackety, clack](www.reddit.com)",
+            TextType.TEXT
+        )
+        new_nodes = split_nodes_delimiter(
+            split_nodes_delimiter(
+                split_nodes_image(
+                    split_nodes_link([node])
+                    ), "**", TextType.BOLD
+                ), "_", TextType.ITALIC
+            )
+        self.assertListEqual(
+            [
+                TextNode("This", TextType.BOLD),
+                TextNode(" is a hyperlink ", TextType.TEXT),
+                TextNode("clickety, click", TextType.LINK, "www.google.com"),
+                TextNode(" and ", TextType.TEXT),
+                TextNode("this", TextType.ITALIC),
+                TextNode(" is an image ", TextType.TEXT),
+                TextNode("clackety, clack", TextType.IMAGE, "www.reddit.com")
 
+            ],
+            new_nodes,
+        )
+    def test_split_mixed_error(self):
+        node = TextNode(
+            "**This** is a hyperlink [clickety, click](www.google.com) and _this is an image ![clackety, clack](www.reddit.com)",
+            TextType.TEXT
+        )
+        with self.assertRaises(Exception) as cm:
+            split_nodes_delimiter(
+                split_nodes_delimiter(
+                    split_nodes_image(
+                        split_nodes_link([node])
+                        ), "**", TextType.BOLD
+                    ), "_", TextType.ITALIC
+                )
+        the_exception = str(cm.exception)
+        self.assertIn("dip shit", the_exception)
+    def test_text_to_textnodes(self):
+        test_text = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        converted_nodes = text_to_textnodes(test_text)
+        self.assertListEqual(
+            [
+                TextNode("This is ", TextType.TEXT),
+                TextNode("text", TextType.BOLD),
+                TextNode(" with an ", TextType.TEXT),
+                TextNode("italic", TextType.ITALIC),
+                TextNode(" word and a ", TextType.TEXT),
+                TextNode("code block", TextType.CODE),
+                TextNode(" and an ", TextType.TEXT),
+                TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
+                TextNode(" and a ", TextType.TEXT),
+                TextNode("link", TextType.LINK, "https://boot.dev"),
+            ],
+            converted_nodes
+        )
+    def test_text_to_textnodes_error(self):
+        test_text = "This is **text* with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        with self.assertRaises(Exception) as cm:
+            converted_nodes = text_to_textnodes(test_text)
+        the_exception = str(cm.exception)
+        self.assertIn("dip shit", the_exception)
+    def test_text_to_textnodes_nothing(self):
+        test_text = ""
+        converted_nodes = text_to_textnodes(test_text)
+        self.assertTrue(len(converted_nodes) == 0)
+    def test_text_to_textnodes_spaces(self):
+        test_text = "          "
+        converted_nodes = text_to_textnodes(test_text)
+        self.assertTrue(len(converted_nodes) == 0)
