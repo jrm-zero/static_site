@@ -3,6 +3,7 @@ import re
 from htmlnode import *
 from textnode import *
 from functions import *
+from blocks import *
 
 class TestFunctions(unittest.TestCase):
     def test_text(self):
@@ -287,4 +288,65 @@ This is the same paragraph on a new line
                 "- This is a list\n- with items",
             ],
         )
-        
+    def test_block_type_unordered_list(self):
+        block = '''
+- Hello
+- World
+- This is Gorgon
+'''
+        tmp_block = markdown_to_blocks(block)
+        block_type = block_to_block_type(tmp_block[0])
+        self.assertTrue(block_type == BlockType.UNORDERED_LIST)
+    def test_block_type_ordered_list(self):
+        block = '''
+1. Hello
+2. World
+3. This is Gorgon
+'''
+        tmp_block = markdown_to_blocks(block)
+        block_type = block_to_block_type(tmp_block[0])
+        self.assertTrue(block_type == BlockType.ORDERED_LIST)
+    def test_block_type_quotes(self):
+        block = '''
+>Quoting to the quote
+>blah, blah, blah
+>I have no idea what is going on
+'''
+        tmp_block = markdown_to_blocks(block)
+        block_type = block_to_block_type(tmp_block[0])
+        self.assertTrue(block_type == BlockType.QUOTE)
+    def test_block_type_code(self):
+        block = '''
+```
+<br>blah, blah, blah</br>
+<p>this is some insane shit, no?</p>
+<i>bllllllaaaaaaahhhhhhhh</i>
+```
+'''
+        tmp_block = markdown_to_blocks(block)
+        block_type = block_to_block_type(tmp_block[0])
+        self.assertTrue(block_type == BlockType.CODE)
+    def test_block_type_headings(self):
+        block = '''
+# Heading 1
+'''
+        block_2 = '''
+## Heading 2
+'''
+        block_3 = '''
+### Heading 3
+'''
+        block_4 = '''
+#### Heading 4
+'''
+        block_5 = '''
+##### Heading 5
+'''
+        block_6 = '''
+###### Heading 6
+'''
+        headings = [block, block_2, block_3, block_4, block_5, block_6]
+        for heading in headings:
+            new_heading = markdown_to_blocks(heading)
+            block_type = block_to_block_type(new_heading[0])
+            self.assertTrue(block_type == BlockType.HEADING)
