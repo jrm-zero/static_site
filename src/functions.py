@@ -123,3 +123,11 @@ def text_to_textnodes(text):
     #for i in range(len(new_nodes)):
         #print(f"\n{i + 1}. {new_nodes[i]}")
     return new_nodes
+
+def markdown_to_blocks(markdown):
+    blocks = markdown.split("\n\n")
+    for i in range(len(blocks)):
+        blocks[i] = blocks[i].strip(" \n")
+        if blocks[i] == "":
+            blocks.pop(i)
+    return blocks
