@@ -9,6 +9,7 @@ class BlockType(Enum):
     UNORDERED_LIST = "UNORDERED_LIST"
     ORDERED_LIST = "ORDERED_LIST"
 
+
 def block_to_block_type(block):
     if block.startswith("#"):
         for i in range(0,7):
@@ -29,7 +30,7 @@ def block_to_block_type(block):
             if line_break[1] != "-":
                 continue
         return BlockType.UNORDERED_LIST
-    elif block.startswith(re.findall(r"(\d\.)", block)[0]):
+    elif re.search(r"(^\d\.)", block):
         line_breaks = re.findall(r"(\n.{2})", block)
         for line_break in line_breaks:
             if line_break[1:3] != r"\d\.":
