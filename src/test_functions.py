@@ -377,8 +377,71 @@ the **same** even with inline stuff
 
         node = markdown_to_html_node(md)
         html = node.to_html()
-        print(html)
         self.assertEqual(
             html,
-            "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
+            "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff</code></pre></div>",
+        )
+    def test_headings(self):
+        md = """
+#### What's UPPPPPPPPPPP!
+
+This is text that _should_ remain
+the **same** even with inline stuff
+"""
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><h4>What's UPPPPPPPPPPP!</h4><p>This is text that <i>should</i> remain the <b>same</b> even with inline stuff</p></div>",
+        )
+    def test_unordered_lists(self):
+        md = """
+#### What's UPPPPPPPPPPP!
+
+-Item 1 **bolded** time
+-Item 2
+-Item 3
+"""
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><h4>What's UPPPPPPPPPPP!</h4><ul><li>Item 1 <b>bolded</b> time</li><li>Item 2</li><li>Item 3</li></ul></div>",
+        )
+    def test_ordered_lists(self):
+        md = """
+#### What's UPPPPPPPPPPP!
+
+1.Item 1 **bolded** time
+2.Item 2
+3.Item 3
+"""
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><h4>What's UPPPPPPPPPPP!</h4><ol><li>Item 1 <b>bolded</b> time</li><li>Item 2</li><li>Item 3</li></ol></div>",
+        )
+    def test_block_qoutes(self):
+        self.maxDiff = None
+        md = """
+#### What's UPPPPPPPPPPP!
+
+##### This is heading 334
+
+What they said in the blockety block:
+
+>This is all **of the** quote
+>Noper, this is
+>that is all lies, this is actually the end
+"""
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><h4>What's UPPPPPPPPPPP!</h4><h5>This is heading 334</h5><p>What they said in the blockety block:</p><block>This is all <b>of the</b> quote Noper, this is that is all lies, this is actually the end</block></div>",
         )

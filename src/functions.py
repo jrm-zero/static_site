@@ -134,30 +134,29 @@ def markdown_to_blocks(markdown):
 def markdown_to_html_node(markdown):
     converted_nodes = []
     blocks = markdown_to_blocks(markdown)
-
     for block in blocks:
         block_type = block_to_block_type(block)
-
         match block_type:
             case BlockType.PARAGRAPH:
                 nodes = text_to_children(combine_newlines(block, block_type))
-                converted_node = ParentNode("p", [nodes])
+                converted_node = ParentNode("p", nodes)
             case BlockType.HEADING:
+                heading = heading_type(block)
+                block = block.strip("# ")
                 nodes = text_to_children(block)
-                heading_type = heading_type(block)
-                converted_node = ParentNode(f"h{heading_type}", [nodes])
+                converted_node = ParentNode(f"h{heading}", nodes)
             case BlockType.CODE:
-                txt_node = text_to_textnodes(block)
-                converted_node = ParentNode("pre",[LeafNode("code", txt_node.text)])
+                block = block.strip("`\n")
+                converted_node = ParentNode("pre",[LeafNode("code", block)])
             case BlockType.QUOTE:
-                nodes = text_to_children(combine_newlines(block, block_type))
-                converted_node = ParentNode("blockquote", [nodes])
+                nodes = text_to_children(strip_leading_indicators(block, block_type))
+                converted_node = ParentNode("block", nodes)
             case BlockType.UNORDERED_LIST:
-                nodes = list_to_html(block)
-                converted_node = ParentNode("ul", [nodes])
+                nodes = list_to_html(block, block_type)
+                converted_node = ParentNode("ul", nodes)
             case BlockType.ORDERED_LIST:
-                nodes = list_to_html(block)
-                converted_node = ParentNode("ol", [nodes])
+                nodes = list_to_html(block, block_type)
+                converted_node = ParentNode("ol", nodes)
 
         converted_nodes.append(converted_node)
 
@@ -173,15 +172,26 @@ def text_to_children(text):
         children.append(new_node)
     return children
 
-def heading_type(block, block_type):
-    if block_type != BlockType.HEADING:
-        raise Exception(f"{block} is not a heading type")
-    for char in block_type:
-        count = 0
+def list_to_children(text, block_type):
+    if block_type is BlockType.UNORDERED_LIST:
+        lines = text.split("\n-")
+    elif block_type is BlockType.ORDERED_LIST:
+        lines = re.findall(r"(\n.{2})", block)
+    for line in lines:
+        children = text_to_textnodes(line)
+        if len(children) > 1:
+            new_node = ParentNode("li", children)
+            continue
+        new_node = LeafNode("li", line)
+
+def heading_type(block):
+    count = 0
+    for char in block:
         if char == "#":
             count += 1
         elif char == " ":
             break
+    return count
 
 def combine_newlines(text, block_type):
     if block_type != BlockType.PARAGRAPH and block_type.QUOTE != BlockType.QUOTE:
@@ -191,9 +201,10 @@ def combine_newlines(text, block_type):
 
 
 def list_to_html(text, block_type):
-    if block_type != BlockType.ORDERED_LIST or block_type != BlockType.UNORDERED_LIST:
-        raise Exception(f"{text} is not a list block type")
-    lines = text.split("\n")
+    if block_type != BlockType.ORDERED_LIST:
+        if block_type != BlockType.UNORDERED_LIST:
+            raise Exception(f"{text} is not a list block type")
+    lines = strip_leading_indicators(text, block_type)    
     list_items = []
     for line in lines:
         if len(text_to_children(line)) == 1:
@@ -202,4 +213,23 @@ def list_to_html(text, block_type):
             list_item = ParentNode("li", text_to_children(line))
         list_items.append(list_item)
     return list_items
-    
+
+def strip_leading_indicators(text, block_type):
+    lines = text.split("\n")
+    match block_type:
+        case BlockType.ORDERED_LIST:
+            for i in range(len(lines)):
+                tmp = lines[i]
+                to_strip = re.findall(r"(^\d\.)", tmp)[0]
+                lines[i] = tmp.lstrip(to_strip)
+        case BlockType.UNORDERED_LIST:
+            for i in range(len(lines)):
+                tmp = lines[i]
+                lines[i] = tmp.lstrip("-")
+        case BlockType.QUOTE:
+            for i in range(len(lines)):
+                tmp = lines[i]
+                lines[i] = tmp.lstrip(">")
+            stripped_line = " ".join(lines)
+            return stripped_line
+    return lines
