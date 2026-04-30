@@ -176,7 +176,7 @@ def list_to_children(text, block_type):
     if block_type is BlockType.UNORDERED_LIST:
         lines = text.split("\n-")
     elif block_type is BlockType.ORDERED_LIST:
-        lines = re.findall(r"(\n.{2})", block)
+        lines = re.findall(r"(\n.{2})", text)
     for line in lines:
         children = text_to_textnodes(line)
         if len(children) > 1:
