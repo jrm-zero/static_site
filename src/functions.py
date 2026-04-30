@@ -2,6 +2,8 @@ from textnode import *
 from htmlnode import *
 from blocks import *
 import re
+import os
+import shutil
 
 def text_node_to_html_node(text_node):
     match text_node.text_type:
@@ -233,3 +235,24 @@ def strip_leading_indicators(text, block_type):
             stripped_line = " ".join(lines)
             return stripped_line
     return lines
+
+def src_to_destination(source_directory, destination_directory):
+    if os.path.exists(source_directory) == False:
+        raise Exception(f"{source_directory} does not exist")
+    elif os.path.exists(destination_directory) == False:
+        raise Exception(f"{destination_directory} does not exist")
+    
+    if len(os.listdir(destination_directory)) != 0: 
+        shutil.rmtree(destination_directory)
+        os.mkdir(destination_directory)
+
+    for item in os.listdir(source_directory):
+        item_file_path = os.path.join(source_directory, str(item))
+        if os.path.isdir(item_file_path):
+            new_destination_directory = os.path.join(destination_directory, str(item))
+            os.mkdir(new_destination_directory)
+            src_to_destination(item_file_path, new_destination_directory)
+        elif os.path.isfile(item_file_path):
+            shutil.copy(item_file_path, destination_directory)
+    
+

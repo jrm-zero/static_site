@@ -1,9 +1,6 @@
 from textnode import TextNode
+from functions import src_to_destination
 
 def main():
-    test = TextNode("What's up?","link","http://goog.deo")
-    test2 = TextNode("Nothing", "italics")
-    print(test)
-    print(test2)
-
+    src_to_destination("./static", "./public")
 main()
