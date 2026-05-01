@@ -445,3 +445,45 @@ What they said in the blockety block:
             html,
             "<div><h4>What's UPPPPPPPPPPP!</h4><h5>This is heading 334</h5><p>What they said in the blockety block:</p><block>This is all <b>of the</b> quote Noper, this is that is all lies, this is actually the end</block></div>",
         )
+    def test_extract_h1(self):
+        md = """
+# Heading 1
+
+Simple Test
+"""
+        heading = extract_title(md)
+        self.assertEqual(heading, "Heading 1")
+    def test_extract_wrong_heading(self):
+        md = """
+## Heading 1
+
+Wrong Test
+"""
+        with self.assertRaises(Exception) as cm:
+            heading = extract_title(md)
+        the_exception = str(cm.exception)
+        self.assertEqual(the_exception, "markdown provided has no h1 header")
+    def test_extract_multiple_headings(self):
+        md = """
+# Heading 1
+
+## Heading 2
+
+### Heading 3
+
+Multiple Headings
+"""
+        heading = extract_title(md)
+        self.assertEqual(heading, "Heading 1")
+    def test_extract_headings_out_of_order(self):
+        md = """
+## Heading 2
+
+# Heading 1
+
+### Heading 3
+
+Multiple Headings
+"""
+        heading = extract_title(md)
+        self.assertEqual(heading, "Heading 1")

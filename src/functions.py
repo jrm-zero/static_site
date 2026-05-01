@@ -152,7 +152,7 @@ def markdown_to_html_node(markdown):
                 converted_node = ParentNode("pre",[LeafNode("code", block)])
             case BlockType.QUOTE:
                 nodes = text_to_children(strip_leading_indicators(block, block_type))
-                converted_node = ParentNode("block", nodes)
+                converted_node = ParentNode("blockquote", nodes)
             case BlockType.UNORDERED_LIST:
                 nodes = list_to_html(block, block_type)
                 converted_node = ParentNode("ul", nodes)
@@ -223,15 +223,15 @@ def strip_leading_indicators(text, block_type):
             for i in range(len(lines)):
                 tmp = lines[i]
                 to_strip = re.findall(r"(^\d\.)", tmp)[0]
-                lines[i] = tmp.lstrip(to_strip)
+                lines[i] = tmp.lstrip(f"{to_strip} ")
         case BlockType.UNORDERED_LIST:
             for i in range(len(lines)):
                 tmp = lines[i]
-                lines[i] = tmp.lstrip("-")
+                lines[i] = tmp.lstrip("- ")
         case BlockType.QUOTE:
             for i in range(len(lines)):
                 tmp = lines[i]
-                lines[i] = tmp.lstrip(">")
+                lines[i] = tmp.lstrip("> ")
             stripped_line = " ".join(lines)
             return stripped_line
     return lines
@@ -254,5 +254,39 @@ def src_to_destination(source_directory, destination_directory):
             src_to_destination(item_file_path, new_destination_directory)
         elif os.path.isfile(item_file_path):
             shutil.copy(item_file_path, destination_directory)
-    
 
+def extract_title(markdown):
+    blocks = markdown_to_blocks(markdown)
+    for block in blocks:
+        block_type = block_to_block_type(block)
+        if block_type == BlockType.HEADING:
+            if heading_type(block) == 1:
+                return block.lstrip("# ").rstrip(" ")
+    raise Exception("markdown provided has no h1 header")
+
+def generate_page(from_path, template_path = None, dest_path = None):
+    print(f"Generating page from {from_path} to {dest_path} using {template_path}")
+    
+    md_file = open(from_path)
+    md = md_file.read()
+    md_file.close()
+
+    template_file = open(template_path)
+    template = template_file.read()
+    template_file.close()
+
+    node = markdown_to_html_node(md)
+    html = node.to_html()
+
+    heading = extract_title(md)
+    html_page = template.replace("{{ Title }}", heading)
+    html_page = html_page.replace("{{ Content }}", html)
+
+    if os.path.exists(os.path.exists(os.path.dirname(dest_path))) != True:
+        dest_path_dir = os.path.dirname(dest_path)
+        os.makedirs(dest_path_dir)
+    dest_html = open(dest_path, "x")
+    dest_html.write(html_page)
+    dest_html.close()
+
+    return
