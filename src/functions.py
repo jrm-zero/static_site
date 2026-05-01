@@ -209,7 +209,7 @@ def list_to_html(text, block_type):
     lines = strip_leading_indicators(text, block_type)    
     list_items = []
     for line in lines:
-        if len(text_to_children(line)) == 1:
+        if len(text_to_children(line)) == 0:
             list_item = LeafNode("li", line)
         else:
             list_item = ParentNode("li", text_to_children(line))
@@ -282,7 +282,7 @@ def generate_page(from_path, template_path = None, dest_path = None):
     html_page = template.replace("{{ Title }}", heading)
     html_page = html_page.replace("{{ Content }}", html)
 
-    if os.path.exists(os.path.exists(os.path.dirname(dest_path))) != True:
+    if os.path.exists(os.path.dirname(dest_path)) != True:
         dest_path_dir = os.path.dirname(dest_path)
         os.makedirs(dest_path_dir)
     dest_html = open(dest_path, "x")
