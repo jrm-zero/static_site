@@ -3,7 +3,7 @@ from functions import src_to_destination, generate_pages_recursively
 import sys
 
 def main():
-    basepath = sys.argv[0]
+    basepath = sys.argv[1]
     if basepath == "":
         basepath = "/"
     src_to_destination("./static", "./docs")
