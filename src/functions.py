@@ -3,6 +3,7 @@ from htmlnode import *
 from blocks import *
 import re
 import os
+import pathlib
 import shutil
 
 def text_node_to_html_node(text_node):
@@ -265,6 +266,7 @@ def extract_title(markdown):
     raise Exception("markdown provided has no h1 header")
 
 def generate_page(from_path, template_path = None, dest_path = None):
+    
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
     
     md_file = open(from_path)
@@ -285,8 +287,29 @@ def generate_page(from_path, template_path = None, dest_path = None):
     if os.path.exists(os.path.dirname(dest_path)) != True:
         dest_path_dir = os.path.dirname(dest_path)
         os.makedirs(dest_path_dir)
-    dest_html = open(dest_path, "x")
+    dest_html = open(dest_path, "w")
     dest_html.write(html_page)
     dest_html.close()
 
     return
+
+def generate_pages_recursively(dir_path_content, template_path, dest_dir_path):
+    if os.path.exists(dest_dir_path) != True:
+            os.makedirs(dest_dir_path)
+    children = os.listdir(dir_path_content)
+    log = open("./log.txt", "a")
+    log.write(f"\n-----\nat {dir_path_content} has these childern: {children}")
+    for child in children:
+        log.write(f"\nchild being examined: {child}")
+        child_path = os.path.join(dir_path_content, child)
+        child_dest_path = os.path.join(dest_dir_path, child)
+
+        if os.path.isfile(child_path):
+            child_dest_path = pathlib.Path(str(child_dest_path.replace(".md", ".html")))
+            log.write(f"\nattempting to generate {child_path} at {child_dest_path}")
+            generate_page(child_path, template_path, child_dest_path) 
+            continue
+        if len(os.listdir(child_path)) > 0:
+            generate_pages_recursively(child_path, template_path, child_dest_path)  
+    
+    log.close()

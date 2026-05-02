@@ -1,0 +1,119 @@
+
+-----
+at ./content/blog/glorfindel has these childern: ['index.md']
+child being examined: index.md
+attempting to generate ./content/blog/glorfindel/index.md at ./public/blog/glorfindel/index.md
+-----
+at ./content/blog/majesty has these childern: ['index.md']
+child being examined: index.md
+attempting to generate ./content/blog/majesty/index.md at ./public/blog/majesty/index.md
+-----
+at ./content/blog/tom has these childern: ['index.md']
+child being examined: index.md
+attempting to generate ./content/blog/tom/index.md at ./public/blog/tom/index.md
+-----
+at ./content/blog has these childern: ['glorfindel', 'majesty', 'tom']
+child being examined: glorfindel
+child being examined: majesty
+child being examined: tom
+-----
+at ./content/contact has these childern: ['index.md']
+child being examined: index.md
+attempting to generate ./content/contact/index.md at ./public/contact/index.md
+-----
+at ./content has these childern: ['blog', 'index.md', 'contact']
+child being examined: blog
+child being examined: index.md
+attempting to generate ./content/index.md at ./public/index.md
+child being examined: contact
+-----
+at ./content/blog/glorfindel has these childern: ['index.md']
+child being examined: index.md
+attempting to generate content/blog/glorfindel/index.html at ./public/blog/glorfindel/index.md
+-----
+at ./content/blog has these childern: ['glorfindel', 'majesty', 'tom']
+child being examined: glorfindel
+-----
+at ./content has these childern: ['blog', 'index.md', 'contact']
+child being examined: blog
+-----
+at ./content/blog/glorfindel has these childern: ['index.md']
+child being examined: index.md
+attempting to generate ./content/blog/glorfindel/index.md at public/blog/glorfindel/index.html
+-----
+at ./content/blog/majesty has these childern: ['index.md']
+child being examined: index.md
+attempting to generate ./content/blog/majesty/index.md at public/blog/majesty/index.html
+-----
+at ./content/blog/tom has these childern: ['index.md']
+child being examined: index.md
+attempting to generate ./content/blog/tom/index.md at public/blog/tom/index.html
+-----
+at ./content/blog has these childern: ['glorfindel', 'majesty', 'tom']
+child being examined: glorfindel
+child being examined: majesty
+child being examined: tom
+-----
+at ./content/contact has these childern: ['index.md']
+child being examined: index.md
+attempting to generate ./content/contact/index.md at public/contact/index.html
+-----
+at ./content has these childern: ['blog', 'index.md', 'contact']
+child being examined: blog
+child being examined: index.md
+attempting to generate ./content/index.md at public/index.html
+child being examined: contact
+-----
+at ./content/blog/glorfindel has these childern: ['index.md']
+child being examined: index.md
+attempting to generate ./content/blog/glorfindel/index.md at public/blog/glorfindel/index.html
+-----
+at ./content/blog/majesty has these childern: ['index.md']
+child being examined: index.md
+attempting to generate ./content/blog/majesty/index.md at public/blog/majesty/index.html
+-----
+at ./content/blog/tom has these childern: ['index.md']
+child being examined: index.md
+attempting to generate ./content/blog/tom/index.md at public/blog/tom/index.html
+-----
+at ./content/blog has these childern: ['glorfindel', 'majesty', 'tom']
+child being examined: glorfindel
+child being examined: majesty
+child being examined: tom
+-----
+at ./content/contact has these childern: ['index.md']
+child being examined: index.md
+attempting to generate ./content/contact/index.md at public/contact/index.html
+-----
+at ./content has these childern: ['blog', 'index.md', 'contact']
+child being examined: blog
+child being examined: index.md
+attempting to generate ./content/index.md at public/index.html
+child being examined: contact
+-----
+at ./content/blog/glorfindel has these childern: ['index.md']
+child being examined: index.md
+attempting to generate ./content/blog/glorfindel/index.md at public/blog/glorfindel/index.html
+-----
+at ./content/blog/majesty has these childern: ['index.md']
+child being examined: index.md
+attempting to generate ./content/blog/majesty/index.md at public/blog/majesty/index.html
+-----
+at ./content/blog/tom has these childern: ['index.md']
+child being examined: index.md
+attempting to generate ./content/blog/tom/index.md at public/blog/tom/index.html
+-----
+at ./content/blog has these childern: ['glorfindel', 'majesty', 'tom']
+child being examined: glorfindel
+child being examined: majesty
+child being examined: tom
+-----
+at ./content/contact has these childern: ['index.md']
+child being examined: index.md
+attempting to generate ./content/contact/index.md at public/contact/index.html
+-----
+at ./content has these childern: ['blog', 'index.md', 'contact']
+child being examined: blog
+child being examined: index.md
+attempting to generate ./content/index.md at public/index.html
+child being examined: contact
