@@ -6,6 +6,6 @@ def main():
     basepath = sys.argv[0]
     if basepath == "":
         basepath = "/"
-    src_to_destination("./static", "./public")
+    src_to_destination("./static", "./docs")
     generate_pages_recursively("./content", "./template.html", "./docs", basepath)
 main()
