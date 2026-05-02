@@ -225,3 +225,30 @@ child being examined: blog
 child being examined: index.md
 attempting to generate ./content/index.md at docs/index.html
 child being examined: contact
+-----
+at ./content/blog/glorfindel has these childern: ['index.md']
+child being examined: index.md
+attempting to generate ./content/blog/glorfindel/index.md at docs/blog/glorfindel/index.html
+-----
+at ./content/blog/majesty has these childern: ['index.md']
+child being examined: index.md
+attempting to generate ./content/blog/majesty/index.md at docs/blog/majesty/index.html
+-----
+at ./content/blog/tom has these childern: ['index.md']
+child being examined: index.md
+attempting to generate ./content/blog/tom/index.md at docs/blog/tom/index.html
+-----
+at ./content/blog has these childern: ['glorfindel', 'majesty', 'tom']
+child being examined: glorfindel
+child being examined: majesty
+child being examined: tom
+-----
+at ./content/contact has these childern: ['index.md']
+child being examined: index.md
+attempting to generate ./content/contact/index.md at docs/contact/index.html
+-----
+at ./content has these childern: ['blog', 'index.md', 'contact']
+child being examined: blog
+child being examined: index.md
+attempting to generate ./content/index.md at docs/index.html
+child being examined: contact
